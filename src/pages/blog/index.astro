@@ -1,0 +1,215 @@
+---
+import { Image } from "astro:assets";
+import { getCollection } from "astro:content";
+import BaseHead from "../../components/BaseHead.astro";
+import Footer from "../../components/Footer.astro";
+import Header from "../../components/Header.astro";
+import { SITE_DESCRIPTION, SITE_TITLE } from "../../consts";
+
+const posts = (await getCollection("blog")).sort(
+  (a, b) => Number(b.data.year ?? 0) - Number(a.data.year ?? 0),
+);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead
+      title={SITE_TITLE + SITE_DESCRIPTION}
+      description={SITE_DESCRIPTION}
+    />
+    <style>
+      main {
+        width: 1200px; /* Hacemos el main más ancho para que quepa el diseño lado a lado */
+        max-width: 100%;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+      }
+      ul {
+        display: flex;
+        flex-direction: column;
+        gap: 6rem; /* Separación grande entre cada proyecto */
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+      }
+      li.project-card {
+        display: flex;
+        align-items: center;
+        gap: 4rem;
+        width: 100%;
+      }
+      
+      /* ESTA ES LA MAGIA: Intercala el orden en los elementos pares */
+      li.project-card:nth-child(even) {
+        flex-direction: row-reverse;
+      }
+      
+      .project-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+      }
+      .project-image {
+        flex: 1;
+      }
+      .project-image img {
+        width: 100%;
+        height: auto;
+        border-radius: 24px;
+        object-fit: cover;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease;
+      }
+      .project-image:hover img {
+        transform: translateY(-5px);
+      }
+
+      /* Tipografía de la tarjeta */
+      .project-number {
+        color: #d97a66; /* Color coral */
+        font-size: 0.8rem;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+      }
+      .title {
+        font-family: 'Georgia', serif; /* Fuente serif para los títulos */
+        font-size: 3rem;
+        margin: 0 0 0.5rem 0;
+        color: #1a1a1a;
+        line-height: 1.1;
+      }
+      .location {
+        color: #666;
+        font-size: 0.9rem;
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+      }
+
+      /* Grilla de detalles (Arquitecto, Año, etc) */
+      .details-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        padding: 1.5rem 0;
+        border-top: 1px solid #eaeaea;
+        border-bottom: 1px solid #eaeaea;
+        margin-bottom: 1.5rem;
+      }
+      .detail-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.3rem;
+      }
+      .detail-label {
+        font-size: 0.7rem;
+        color: #888;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+      }
+      .detail-value {
+        font-size: 1rem;
+        color: #1a1a1a;
+        font-weight: 500;
+      }
+
+      /* Enlace Ver detalles */
+      .link-details {
+        color: #d97a66;
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        transition: opacity 0.2s;
+      }
+      .link-details:hover {
+        opacity: 0.7;
+      }
+
+      /* Responsividad para móviles */
+      @media (max-width: 800px) {
+        li.project-card, 
+        li.project-card:nth-child(even) {
+          flex-direction: column-reverse; /* En móvil, imagen arriba y texto abajo */
+          gap: 2rem;
+        }
+        .title {
+          font-size: 2.2rem;
+        }
+        .details-grid {
+          grid-template-columns: 1fr; /* Una sola columna en móvil */
+          gap: 1rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <Header />
+    <main>
+      <section>
+        <ul>
+          {
+            posts.map((post, index) => (
+              <li class="project-card">
+                <div class="project-content">
+                  <!-- Formateamos el número para que siempre tenga un cero a la izquierda (01, 02...) -->
+                  <span class="project-number">Proyecto {String(index + 1).padStart(2, '0')}</span>
+                  
+                  <h2 class="title">{post.data.title}</h2>
+                  
+                  <div class="location">
+                    <!-- Icono de ubicación (pin) en SVG -->
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                    {post.data.location}
+                  </div>
+
+                  <div class="details-grid">
+                    <div class="detail-item">
+                      <span class="detail-label">Arquitecto</span>
+                      <span class="detail-value">{post.data.artist || 'No especificado'}</span>
+                    </div>
+                    <div class="detail-item">
+                      <span class="detail-label">Año</span>
+                      <span class="detail-value">{post.data.year}</span>
+                    </div>
+                    <div class="detail-item">
+                      <span class="detail-label">Superficie</span>
+                      <span class="detail-value">{post.data.surface || '-'}</span>
+                    </div>
+                    <div class="detail-item">
+                      <span class="detail-label">Tipología</span>
+                      <span class="detail-value">{post.data.tipo || '-'}</span>
+                    </div>
+                  </div>
+
+                  <a href={`/blog/${post.id}/`} class="link-details">
+                    Ver detalles ↗
+                  </a>
+                </div>
+                
+                <div class="project-image">
+                  <a href={`/blog/${post.id}/`}>
+                    {post.data.heroImage && (
+                      <Image
+                        width={800}
+                        height={600}
+                        src={post.data.heroImage}
+                        alt={post.data.title}
+                      />
+                    )}
+                  </a>
+                </div>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+    </main>
+    <Footer />
+  </body>
+</html>

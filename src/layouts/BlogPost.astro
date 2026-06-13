@@ -1,0 +1,154 @@
+---
+import { Image } from "astro:assets";
+import type { CollectionEntry } from "astro:content";
+import BaseHead from "../components/BaseHead.astro";
+import Footer from "../components/Footer.astro";
+import FormattedDate from "../components/FormattedDate.astro";
+import Header from "../components/Header.astro";
+
+type Props = CollectionEntry<"blog">["data"];
+
+const {
+  title,
+  description,
+  location,
+  updatedDate,
+  heroImage,
+  artist,
+  surface,
+  tipo,
+  year,
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <BaseHead title={title} description={description} />
+
+    <style>
+      main {
+        width: calc(100% - 2em);
+        max-width: 100%;
+        margin: 0;
+      }
+      .hero-image {
+        width: 100%;
+      }
+      .hero-image img {
+        display: block;
+        margin: 0 auto;
+        border-radius: 12px;
+        box-shadow: var(--box-shadow);
+      }
+      .prose {
+        width: 720px;
+        max-width: calc(100% - 2em);
+        margin: auto;
+        padding: 1em;
+        color: rgb(var(--gray-dark));
+      }
+      .title {
+        margin-bottom: 1em;
+        padding: 1em 0;
+        text-align: center;
+        line-height: 1;
+      }
+      .title h1 {
+        margin: 0 0 0.5em 0;
+      }
+      .date {
+        margin-bottom: 0.5em;
+        color: rgb(var(--gray));
+      }
+      .last-updated-on {
+        font-style: italic;
+      }
+      /* Estilos para tu nueva sección de detalles */
+      .detalles-proyecto {
+        display: flex;
+        justify-content: center;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+        margin: 1.5rem 0;
+        padding: 1rem;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        font-size: 0.9rem;
+      }
+      .detalles-proyecto p {
+        margin: 0;
+        color: rgb(var(--gray));
+      }
+      .detalles-proyecto strong {
+        color: rgb(var(--black));
+      }
+    </style>
+  </head>
+
+  <body>
+    <Header />
+    <main>
+      <article>
+        <div class="hero-image">
+          {heroImage && <Image src={heroImage} alt="" />}
+        </div>
+        <div class="prose">
+          <div class="title">
+            <div class="date">
+              {
+                updatedDate && (
+                  <div class="last-updated-on">
+                    Last updated on <FormattedDate date={updatedDate} />
+                  </div>
+                )
+              }
+            </div>
+            <h1>{title}</h1>
+
+            <div class="detalles-proyecto">
+              {
+                location && (
+                  <p>
+                    <strong>Ubicación:</strong> {location}
+                  </p>
+                )
+              }
+              {
+                artist && (
+                  <p>
+                    <strong>Artista/Arquitecto:</strong> {artist}
+                  </p>
+                )
+              }
+              {
+                surface && (
+                  <p>
+                    <strong>Superficie:</strong> {surface}
+                  </p>
+                )
+              }
+              {
+                tipo && (
+                  <p>
+                    <strong>Tipo:</strong> {tipo}
+                  </p>
+                )
+              }
+              {
+                year && (
+                  <p>
+                    <strong>Año:</strong> {year}
+                  </p>
+                )
+              }
+            </div>
+            <hr />
+          </div>
+          <slot />
+        </div>
+      </article>
+    </main>
+    <Footer />
+  </body>
+</html>
