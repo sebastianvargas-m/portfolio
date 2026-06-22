@@ -8,7 +8,7 @@ import HeroImage from "../assets/index.jpeg";
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="es">
   <head>
     <BaseHead
       title={SITE_TITLE + SITE_DESCRIPTION}
@@ -43,11 +43,18 @@ import HeroImage from "../assets/index.jpeg";
 </html>
 
 <style>
+  /* Reset básico para asegurar que no haya márgenes indeseados */
+  main {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
   /* Contenedor principal del Hero */
   .hero {
     position: relative;
     width: 100%;
-    height: 80vh; /* Ajusta la altura según prefieras */
+    height: 85vh; /* Un poco más inmersivo en escritorio */
     min-height: 600px;
     display: flex;
     align-items: center;
@@ -65,19 +72,18 @@ import HeroImage from "../assets/index.jpeg";
     z-index: 1;
   }
 
-  /* Filtro oscuro para contraste */
+  /* Filtro con degradado: Más oscuro a la izquierda (donde va el texto), transparente a la derecha */
   .hero-overlay {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(
-      0,
-      0,
-      0,
-      0.4
-    ); /* Ajusta la opacidad si lo quieres más oscuro/claro */
+    background: linear-gradient(
+      to right,
+      rgba(0, 0, 0, 0.75) 0%,
+      rgba(0, 0, 0, 0.2) 100%
+    );
     z-index: 2;
   }
 
@@ -86,57 +92,98 @@ import HeroImage from "../assets/index.jpeg";
     position: relative;
     z-index: 3;
     max-width: 800px;
-    padding: 0 2rem;
-    margin-left: 5%; /* Para darle el margen izquierdo que se ve en tu imagen */
+    padding: 0 5%; /* Usamos porcentaje para fluidez responsiva */
     color: white;
   }
 
   /* Estilos tipográficos */
   .kicker {
-    font-size: 0.8rem;
-    letter-spacing: 0.15em;
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
-    margin-bottom: 1rem;
+    margin-bottom: 1.2rem;
     display: block;
-    opacity: 0.9;
+    color: #fbd3c6; /* Un tono sutil basado en el color terracota */
+    font-weight: 600;
   }
 
   h1 {
-    font-size: clamp(3rem, 5vw, 4.5rem); /* Responsive typography */
+    font-family: "Georgia", serif; /* Heredamos la fuente de los proyectos */
+    font-size: clamp(
+      2.5rem,
+      6vw,
+      4.8rem
+    ); /* Escala perfecta en cualquier pantalla */
     color: white;
-    line-height: 1.1;
-    margin: 0 0 1rem 0;
-    font-weight: bold;
+    line-height: 1.05;
+    margin: 0 0 1.5rem 0;
+    font-weight: normal; /* Georgia luce más elegante sin bold extremo */
   }
 
   p {
-    font-size: 1.1rem;
-    line-height: 1.5;
-    margin-bottom: 2rem;
-    max-width: 600px;
-    opacity: 0.9;
+    font-size: 1.15rem;
+    line-height: 1.6;
+    margin-bottom: 2.5rem;
+    max-width: 550px;
+    color: rgba(255, 255, 255, 0.9);
   }
 
-  /* Botón */
+  /* Botón con micro-interacciones */
   .btn {
     display: inline-block;
-    background-color: #d67a53; /* Color terracota extraído de la imagen */
+    background-color: #d67a53;
     color: white;
-    padding: 12px 28px;
+    padding: 14px 32px;
     border-radius: 50px;
     text-decoration: none;
     font-weight: 500;
-    transition: background-color 0.3s ease;
+    letter-spacing: 0.05em;
+    transition: all 0.3s ease;
   }
 
   .btn:hover {
     background-color: #bc6541;
+    transform: translateY(-2px); /* Se eleva un poco al pasar el mouse */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
   }
 
-  /* Ajustes para móviles */
+  /* =========================================
+     MEDIA QUERIES (MÓVILES Y TABLETS)
+     ========================================= */
+
   @media (max-width: 768px) {
+    .hero {
+      height: 100vh; /* En celular, que el hero ocupe toda la pantalla inicial */
+      justify-content: center; /* Centramos vertical y horizontalmente */
+      text-align: center;
+    }
+
+    .hero-overlay {
+      /* En móvil el texto está centrado, así que el filtro debe ser uniforme */
+      background: rgba(0, 0, 0, 0.55);
+    }
+
     .hero-content {
-      margin-left: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center; /* Asegura que el botón y textos se centren */
+      padding: 0 1.5rem;
+    }
+
+    .kicker {
+      font-size: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    h1 {
+      /* Ajustamos el salto de línea para móviles */
+      font-size: clamp(2.2rem, 10vw, 3rem);
+      margin-bottom: 1rem;
+    }
+
+    p {
+      font-size: 1rem;
+      margin-bottom: 2rem;
     }
   }
 </style>

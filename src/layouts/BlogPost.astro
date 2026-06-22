@@ -28,60 +28,144 @@ const {
 
     <style>
       main {
-        width: calc(100% - 2em);
-        max-width: 100%;
-        margin: 0;
+        width: 100%;
+        max-width: 1100px; /* Ancho ideal para el contenedor general */
+        margin: 0 auto;
+        padding: 3rem 1.5rem;
+        box-sizing: border-box;
       }
       .hero-image {
         width: 100%;
+        margin-bottom: 3.5rem;
       }
       .hero-image img {
         display: block;
-        margin: 0 auto;
-        border-radius: 12px;
-        box-shadow: var(--box-shadow);
+        width: 100%;
+        height: auto;
+        max-height: 550px; /* Evita que imágenes verticales rompan el layout vertical */
+        object-fit: cover;
+        border-radius: 24px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
       }
       .prose {
-        width: 720px;
-        max-width: calc(100% - 2em);
-        margin: auto;
-        padding: 1em;
-        color: rgb(var(--gray-dark));
+        max-width: 740px; /* El estándar de oro para legibilidad en textos largos */
+        margin: 0 auto;
+        color: #2d3748;
+        line-height: 1.8;
+        font-size: 1.1rem;
       }
       .title {
-        margin-bottom: 1em;
-        padding: 1em 0;
         text-align: center;
-        line-height: 1;
+        margin-bottom: 3rem;
       }
       .title h1 {
-        margin: 0 0 0.5em 0;
+        font-family: "Georgia", serif;
+        font-size: 3.2rem;
+        margin: 0;
+        color: #1a202c;
+        line-height: 1.15;
+      }
+      .location {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.4rem;
+        color: #718096;
+        font-size: 1rem;
+        margin-top: 0.75rem;
       }
       .date {
-        margin-bottom: 0.5em;
-        color: rgb(var(--gray));
+        margin-bottom: 0.75rem;
+        color: #a0aec0;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
       }
       .last-updated-on {
         font-style: italic;
       }
-      /* Estilos para tu nueva sección de detalles */
+
+      /* Grilla técnica minimalista para los metadatos del proyecto */
       .detalles-proyecto {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 2rem;
+        margin: 3.5rem 0;
+        padding: 2rem 0;
+        border-top: 1px solid #e2e8f0;
+        border-bottom: 1px solid #e2e8f0;
+        text-align: left;
+      }
+      .detalle-item {
         display: flex;
-        justify-content: center;
-        gap: 1.5rem;
-        flex-wrap: wrap;
-        margin: 1.5rem 0;
-        padding: 1rem;
-        background-color: #f9f9f9;
-        border-radius: 8px;
-        font-size: 0.9rem;
+        flex-direction: column;
+        gap: 0.35rem;
       }
-      .detalles-proyecto p {
-        margin: 0;
-        color: rgb(var(--gray));
+      .detalle-label {
+        font-size: 0.75rem;
+        color: #718096;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        font-weight: 600;
       }
-      .detalles-proyecto strong {
-        color: rgb(var(--black));
+      .detalle-value {
+        font-size: 1.05rem;
+        color: #1a202c;
+        font-weight: 500;
+      }
+
+      /* Estilos globales quirúrgicos para el contenido inyectado por el <slot /> (Markdown) */
+      .prose :global(p) {
+        margin-bottom: 1.75rem;
+      }
+      .prose :global(h2) {
+        font-family: "Georgia", serif;
+        font-size: 1.85rem;
+        color: #1a202c;
+        margin: 3.5rem 0 1.25rem 0;
+        line-height: 1.3;
+      }
+      .prose :global(h3) {
+        font-size: 1.4rem;
+        color: #1a202c;
+        margin: 2.5rem 0 1rem 0;
+      }
+      .prose :global(hr) {
+        border: 0;
+        border-top: 1px solid #e2e8f0;
+        margin: 3rem 0;
+      }
+
+      /* Adaptabilidad Responsiva Avanzada */
+      @media (max-width: 768px) {
+        main {
+          padding: 1.5rem 1rem;
+        }
+        .title h1 {
+          font-size: 2.4rem;
+        }
+        .hero-image {
+          margin-bottom: 2.5rem;
+        }
+        .detalles-proyecto {
+          grid-template-columns: repeat(2, 1fr); /* 2 columnas en tablets */
+          gap: 1.5rem;
+          padding: 1.5rem 0;
+          margin: 2.5rem 0;
+        }
+        .prose {
+          font-size: 1.05rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .detalles-proyecto {
+          grid-template-columns: 1fr; /* 1 columna fluida en móviles pequeños */
+          gap: 1.25rem;
+        }
+        .title h1 {
+          font-size: 2rem;
+        }
       }
     </style>
   </head>
@@ -91,60 +175,80 @@ const {
     <main>
       <article>
         <div class="hero-image">
-          {heroImage && <Image src={heroImage} alt="" />}
+          {heroImage && <Image src={heroImage} alt={title} />}
         </div>
+
         <div class="prose">
           <div class="title">
-            <div class="date">
-              {
-                updatedDate && (
-                  <div class="last-updated-on">
-                    Last updated on <FormattedDate date={updatedDate} />
-                  </div>
-                )
-              }
-            </div>
+            {
+              updatedDate && (
+                <div class="date">
+                  <span class="last-updated-on">
+                    Última actualización: <FormattedDate date={updatedDate} />
+                  </span>
+                </div>
+              )
+            }
             <h1>{title}</h1>
-
-            <div class="detalles-proyecto">
-              {
-                location && (
-                  <p>
-                    <strong>Ubicación:</strong> {location}
-                  </p>
-                )
-              }
-              {
-                artist && (
-                  <p>
-                    <strong>Artista/Arquitecto:</strong> {artist}
-                  </p>
-                )
-              }
-              {
-                surface && (
-                  <p>
-                    <strong>Superficie:</strong> {surface}
-                  </p>
-                )
-              }
-              {
-                tipo && (
-                  <p>
-                    <strong>Tipo:</strong> {tipo}
-                  </p>
-                )
-              }
-              {
-                year && (
-                  <p>
-                    <strong>Año:</strong> {year}
-                  </p>
-                )
-              }
-            </div>
-            <hr />
+            {
+              location && (
+                <div class="location">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <>
+                      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                      <circle cx="12" cy="10" r="3" />
+                    </>
+                  </svg>
+                  {location}
+                </div>
+              )
+            }
           </div>
+
+          <div class="detalles-proyecto">
+            {
+              artist && (
+                <div class="detalle-item">
+                  <span class="detalle-label">Arquitecto</span>
+                  <span class="detalle-value">{artist}</span>
+                </div>
+              )
+            }
+            {
+              surface && (
+                <div class="detalle-item">
+                  <span class="detalle-label">Superficie</span>
+                  <span class="detalle-value">{surface}</span>
+                </div>
+              )
+            }
+            {
+              tipo && (
+                <div class="detalle-item">
+                  <span class="detalle-label">Tipología</span>
+                  <span class="detalle-value">{tipo}</span>
+                </div>
+              )
+            }
+            {
+              year && (
+                <div class="detalle-item">
+                  <span class="detalle-label">Año</span>
+                  <span class="detalle-value">{year}</span>
+                </div>
+              )
+            }
+          </div>
+
           <slot />
         </div>
       </article>
